@@ -4,48 +4,47 @@ import java.util.List;
 
 import com.cursos.cursosapi.model.Curso;
 import com.cursos.cursosapi.service.CursoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/cursos")
+@RequestMapping("/cursos")
 public class CursoController {
-    @Autowired
-    private CursoService cursoService;
 
-    @GetMapping
-    public List<Curso> listarTodos() {
-        return cursoService.listarTodos();
+    private final CursoService service;
+
+    public CursoController(CursoService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public Curso salvar(@RequestBody Curso curso) {
-        return cursoService.salvar(curso);
+    public ResponseEntity<Curso> criarCurso(@Valid @RequestBody Curso curso) {
+        return ResponseEntity.ok(service.criarCurso(curso));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Curso>> listarCursos(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category) {
+        return ResponseEntity.ok(service.listarCursos(name, category));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Curso> atualizar(@PathVariable Long id, @RequestBody Curso curso) {
-        Curso atualizado = cursoService.atualizar(id, curso);
-        if (atualizado == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(atualizado);
+    public ResponseEntity<Curso> atualizarCurso(
+            @PathVariable Long id,
+            @RequestBody Curso curso) {
+        return ResponseEntity.ok(service.atualizarCurso(id, curso.getName(), curso.getCategory()));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        cursoService.deletar(id);
+    public ResponseEntity<Void> removerCurso(@PathVariable Long id) {
+        service.removerCurso(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Curso> buscarPorId(@PathVariable Long id) {
-        Curso curso = cursoService.buscarPorId(id);
-        if (curso == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(curso);
+    @PatchMapping("/{id}/active")
+    public ResponseEntity<Curso> toggleActive(@PathVariable Long id) {
+        return ResponseEntity.ok(service.toggleActive(id));
     }
 }
-
