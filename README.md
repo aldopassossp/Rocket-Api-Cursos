@@ -64,3 +64,9 @@ Algumas sugestões do que pode ser implementado:
 - Validar se as propriedades `name` e `category` das rotas `POST` e `PUT` estão presentes no `body` da requisição.
 - Para a parte de definição se o curso está ativo ou não, você pode definir um ENUM(enumerador) para fazer esse ‘’check’’.   Sugestão de leitura: [clique aqui](https://www.devmedia.com.br/enums-no-java/38764).
 - Para tratar as exceções, você pode se desafiar e criar as excpetion  😃
+
+  ##################################################################
+
+## Incremento para o desafio 2
+
+Foi incluida a entidade usuário para trabalhar com a autenticação e spring security
