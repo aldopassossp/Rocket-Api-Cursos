@@ -5,6 +5,7 @@ import java.util.List;
 import com.cursos.cursosapi.model.Curso;
 import com.cursos.cursosapi.service.CursoService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/cursos")
 public class CursoController {
 
-    private final CursoService service;
+    @Autowired
+    private CursoService service;
 
     public CursoController(CursoService service) {
         this.service = service;

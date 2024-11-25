@@ -6,6 +6,7 @@ import java.util.List;
 import com.cursos.cursosapi.model.Curso;
 import com.cursos.cursosapi.repository.CursoRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,11 +14,8 @@ import java.util.List;
 @Service
 public class CursoService {
 
-    private final CursoRepository repository;
-
-    public CursoService(CursoRepository repository) {
-        this.repository = repository;
-    }
+    @Autowired
+    private CursoRepository repository;
 
     public Curso criarCurso(Curso curso) {
         return repository.save(curso);
