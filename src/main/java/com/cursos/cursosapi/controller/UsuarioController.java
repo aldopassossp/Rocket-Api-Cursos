@@ -1,6 +1,5 @@
 package com.cursos.cursosapi.controller;
 
-import com.cursos.cursosapi.model.Curso;
 import com.cursos.cursosapi.model.Usuario;
 import com.cursos.cursosapi.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -17,9 +16,14 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @PostMapping
-    public ResponseEntity<Usuario> criarUsuario(@Valid @RequestBody Usuario usuario){
-        return ResponseEntity.ok(usuarioService.criarUsuario(usuario));
+    @PostMapping("/novo")
+    public ResponseEntity<Object> criarUsuario(@Valid @RequestBody Usuario usuario){
+        try {
+            var result = this.usuarioService.criarUsuario(usuario);
+            return ResponseEntity.ok().body(result);
+        } catch(Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping
@@ -35,7 +39,7 @@ public class UsuarioController {
     public ResponseEntity<Usuario> atualizarUsuario(
             @PathVariable Long id,
             @RequestBody Usuario usuario) {
-        return ResponseEntity.ok(usuarioService.atualizarUsuario(id, usuario.getNome(), usuario.getUsername(), usuario.getPassword(), usuario.getEmail()));
+        return ResponseEntity.ok(usuarioService.atualizarUsuario(id, usuario.getLogin(), usuario.getSenha(), usuario.getEmail()));
     }
 
     @DeleteMapping("/{id}")

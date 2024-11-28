@@ -1,10 +1,13 @@
 package com.cursos.cursosapi.service;
 
+import com.cursos.cursosapi.exceptions.UserFoundException;
 import com.cursos.cursosapi.model.Curso;
 import com.cursos.cursosapi.model.Usuario;
 import com.cursos.cursosapi.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,20 +18,30 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public Usuario criarUsuario(Usuario usuario){
-        return usuarioRepository.save(usuario);
+        this.usuarioRepository.findByLoginOrEmail(usuario.getUsername(), usuario.getEmail())
+                .ifPresent((user) -> {
+                    throw new UserFoundException();
+                });
+
+        var password = passwordEncoder.encode(usuario.getPassword());
+        usuario.setSenha(password);
+
+        return this.usuarioRepository.save(usuario);
     }
 
     public List<Usuario> listarUsurios(){
         return usuarioRepository.findAll();
     }
 
-    public Usuario atualizarUsuario(Long id, String nome, String username, String password, String email){
+    public Usuario atualizarUsuario(Long id, String login, String password, String email){
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado."));
-        if (nome != null) usuario.setNome(nome);
-        if (username != null) usuario.setUsername(username);
-        if (password != null) usuario.setPassword(password);
+        if (login != null) usuario.setLogin(login);
+        if (password != null) usuario.setSenha(password);
         if (email != null) usuario.setEmail(email);
         return usuarioRepository.save(usuario);
     }
@@ -42,8 +55,8 @@ public class UsuarioService {
 
     public Usuario toggleActive(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado."));
-        usuario.setActive(!usuario.isActive());
+                .orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado."));
+        usuario.isEnabled();
         return usuarioRepository.save(usuario);
     }
 }
