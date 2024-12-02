@@ -19,6 +19,8 @@ public class TokenService {
     @Value("${security.token.secret}")
     private String secretKey;
 
+    private static final int EXPIRATION_HOURS = 2;
+
     public String gerarToken(Usuario usuario){
         try {
             var algorithm = Algorithm.HMAC256(secretKey);
@@ -33,8 +35,11 @@ public class TokenService {
         }
     }
 
+    public Instant getExpirationDate() {
+        return LocalDateTime.now().plusHours(EXPIRATION_HOURS).toInstant(ZoneOffset.of("-03:00"));
+    }
+
     public String getSubject(String tokenJWT){
-        System.out.println(tokenJWT);
         try {
             var algorithm = Algorithm.HMAC256(secretKey);
             return JWT.require(algorithm)
@@ -42,14 +47,13 @@ public class TokenService {
                     .build()
                     .verify(tokenJWT)
                     .getSubject();
-
         } catch (JWTVerificationException exception){
-            exception.printStackTrace();
-            throw new RuntimeException("Token JWT inválido ou expirado! " + tokenJWT);
+            throw new RuntimeException("Token JWT inválido ou expirado!", exception);
         }
     }
 
     private Instant dataExpiracao() {
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+        return getExpirationDate();
     }
 }
+
