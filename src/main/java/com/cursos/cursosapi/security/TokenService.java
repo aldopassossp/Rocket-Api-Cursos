@@ -14,6 +14,45 @@ import java.time.ZoneOffset;
 import java.util.Date;
 
 @Service
+//public class TokenService {
+//
+//    @Value("${security.token.secret}")
+//    private String secretKey;
+//
+//    public String gerarToken(Usuario usuario){
+//        try {
+//            var algorithm = Algorithm.HMAC256(secretKey);
+//            return JWT.create()
+//                    .withIssuer("Cursos")
+//                    .withSubject(usuario.getUsername())
+//                    .withClaim("id", usuario.getId())
+//                    .withExpiresAt(dataExpiracao())
+//                    .sign(algorithm);
+//        } catch (JWTCreationException exception){
+//            throw new RuntimeException("Erro ao gerar o token");
+//        }
+//    }
+//
+//    public String getSubject(String tokenJWT){
+//        System.out.println(tokenJWT);
+//        try {
+//            var algorithm = Algorithm.HMAC256(secretKey);
+//            return JWT.require(algorithm)
+//                    .withIssuer("Cursos")
+//                    .build()
+//                    .verify(tokenJWT)
+//                    .getSubject();
+//
+//        } catch (JWTVerificationException exception){
+//            exception.printStackTrace();
+//            throw new RuntimeException("Token JWT inválido ou expirado! " + tokenJWT);
+//        }
+//    }
+//
+//    private Instant dataExpiracao() {
+//        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+//    }
+//}
 public class TokenService {
 
     @Value("${security.token.secret}")
@@ -21,19 +60,20 @@ public class TokenService {
 
     private static final int EXPIRATION_HOURS = 2;
 
-    public String gerarToken(Usuario usuario){
+    public String gerarToken(Usuario usuario) {
         try {
-            var algorithm = Algorithm.HMAC256(secretKey);
+            var algorithm = Algorithm.HMAC256(secretKey); // Garante que a chave secreta foi carregada
             return JWT.create()
                     .withIssuer("Cursos")
                     .withSubject(usuario.getUsername())
-                    .withClaim("id", usuario.getId())
-                    .withExpiresAt(dataExpiracao())
-                    .sign(algorithm);
-        } catch (JWTCreationException exception){
-            throw new RuntimeException("Erro ao gerar o token");
+                    .withClaim("id", usuario.getId()) // Adiciona o ID como uma claim
+                    .withExpiresAt(dataExpiracao())  // Define a data de expiração
+                    .sign(algorithm);               // Assina o token com o algoritmo e a chave secreta
+        } catch (IllegalArgumentException | JWTCreationException exception) {
+            throw new RuntimeException("Erro ao gerar o token JWT", exception);
         }
     }
+
 
     public Instant getExpirationDate() {
         return LocalDateTime.now().plusHours(EXPIRATION_HOURS).toInstant(ZoneOffset.of("-03:00"));
@@ -54,6 +94,7 @@ public class TokenService {
 
     private Instant dataExpiracao() {
         return getExpirationDate();
+        //return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 }
 

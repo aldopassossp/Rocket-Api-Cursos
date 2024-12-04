@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CursoService {
@@ -29,6 +30,12 @@ public class CursoService {
                 name == null ? "" : name,
                 category == null ? "" : category
         );
+    }
+
+    public Optional<Curso> listarPorId(Long id) {
+
+            return repository.findById(id);
+
     }
 
     public Curso atualizarCurso(Long id, String name, String category) {

@@ -1,6 +1,7 @@
 package com.cursos.cursosapi.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.cursos.cursosapi.model.Curso;
 import com.cursos.cursosapi.service.CursoService;
@@ -30,6 +31,12 @@ public class CursoController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String category) {
         return ResponseEntity.ok(service.listarCursos(name, category));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<Curso>> listarPorId(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(service.listarPorId(id));
     }
 
     @PutMapping("/{id}")
