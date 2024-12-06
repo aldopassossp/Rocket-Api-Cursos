@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -16,7 +17,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @PostMapping("/novo")
+    @PostMapping
     public ResponseEntity<Object> criarUsuario(@Valid @RequestBody Usuario usuario){
         try {
             var result = this.usuarioService.criarUsuario(usuario);
@@ -35,7 +36,13 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.listarUsurios());
     }
 
-    @PutMapping("/{id}")
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<Usuario>> listarPorId(
+            @PathVariable Long id) {
+        return ResponseEntity.ok(usuarioService.listarPorId(id));
+    }
+
+    @PostMapping("/{id}")
     public ResponseEntity<Usuario> atualizarUsuario(
             @PathVariable Long id,
             @RequestBody Usuario usuario) {

@@ -35,6 +35,10 @@ public class Curso {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "professor_id")
+    private Professor professor;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

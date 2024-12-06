@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import com.cursos.cursosapi.model.Curso;
+import com.cursos.cursosapi.model.Professor;
+import com.cursos.cursosapi.repository.ProfessorRepository;
 import com.cursos.cursosapi.service.CursoService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,9 @@ public class CursoController {
 
     @Autowired
     private CursoService service;
+
+    @Autowired
+    private ProfessorRepository professorRepository;
 
     public CursoController(CursoService service) {
         this.service = service;
@@ -39,11 +45,19 @@ public class CursoController {
         return ResponseEntity.ok(service.listarPorId(id));
     }
 
-    @PutMapping("/{id}")
+    @PostMapping("/{id}")
     public ResponseEntity<Curso> atualizarCurso(
             @PathVariable Long id,
             @RequestBody Curso curso) {
-        return ResponseEntity.ok(service.atualizarCurso(id, curso.getName(), curso.getCategory()));
+
+        Professor professor = null;
+        if (curso.getProfessor() != null && curso.getProfessor().getId() != null) {
+            professor = professorRepository.findById(curso.getProfessor().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Professor não encontrado com ID: " + curso.getProfessor().getId()));
+        }
+        Curso atualizado = service.atualizarCurso(id, curso.getName(), curso.getCategory(), professor);
+
+        return ResponseEntity.ok(atualizado);
     }
 
     @DeleteMapping("/{id}")

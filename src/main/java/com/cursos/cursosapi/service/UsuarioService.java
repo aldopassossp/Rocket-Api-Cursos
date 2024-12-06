@@ -1,16 +1,15 @@
 package com.cursos.cursosapi.service;
 
 import com.cursos.cursosapi.exceptions.UserFoundException;
-import com.cursos.cursosapi.model.Curso;
 import com.cursos.cursosapi.model.Usuario;
 import com.cursos.cursosapi.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -35,6 +34,12 @@ public class UsuarioService {
 
     public List<Usuario> listarUsurios(){
         return usuarioRepository.findAll();
+    }
+
+    public Optional<Usuario> listarPorId(Long id) {
+
+        return usuarioRepository.findById(id);
+
     }
 
     public Usuario atualizarUsuario(Long id, String login, String password, String email){

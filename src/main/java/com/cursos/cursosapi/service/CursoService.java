@@ -1,15 +1,14 @@
 package com.cursos.cursosapi.service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.cursos.cursosapi.model.Curso;
+import com.cursos.cursosapi.model.Professor;
 import com.cursos.cursosapi.repository.CursoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,14 +34,14 @@ public class CursoService {
     public Optional<Curso> listarPorId(Long id) {
 
             return repository.findById(id);
-
     }
 
-    public Curso atualizarCurso(Long id, String name, String category) {
+    public Curso atualizarCurso(Long id, String name, String category, Professor professor) {
         Curso curso = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Curso não encontrado."));
         if (name != null) curso.setName(name);
         if (category != null) curso.setCategory(category);
+        if (professor != null) curso.setProfessor(professor);
         return repository.save(curso);
     }
 
